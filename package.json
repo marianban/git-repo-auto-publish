@@ -1,0 +1,23 @@
+{
+  "name": "git-repo-auto-publish",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marianban/git-repo-auto-publish.git"
+  },
+  "author": "Marian Ban",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/marianban/git-repo-auto-publish/issues"
+  },
+  "homepage": "https://github.com/marianban/git-repo-auto-publish#readme",
+  "dependencies": {
+    "nodegit": "^0.27.0"
+  }
+}
