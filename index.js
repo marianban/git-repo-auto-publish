@@ -1,5 +1,5 @@
 import path from 'path';
-import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 import { DBClient } from './DBClient.js';
 import { FileManager } from './FileManager.js';
 import { BuildManager } from './BuildManager.js';
@@ -7,9 +7,9 @@ import { GitManager } from './GitManager.js';
 
 console.time(`AUTO PUBLISH`);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const pathToRepo = path.join(__dirname, '../demos/');
+dotenv.config();
+
+const pathToRepo = process.env.REPO_PATH;
 
 const db = new DBClient();
 const gitManager = new GitManager(pathToRepo);
