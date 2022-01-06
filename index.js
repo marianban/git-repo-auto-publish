@@ -34,6 +34,9 @@ if (!(await db.isProcessRunning())) {
         );
       }
     }
+  } catch (err) {
+    console.error(err);
+    throw err;
   } finally {
     await db.setProcessAsFinished();
   }
