@@ -1,4 +1,5 @@
 import { spawn } from 'child_process';
+import path from 'path';
 import fs from 'fs/promises';
 
 const runCliCmd = (cmd, args, cwd) =>
@@ -17,17 +18,17 @@ const runCliCmd = (cmd, args, cwd) =>
   });
 
 export class BuildManager {
-  startBuild = async (path) => {
-    console.log(`starting build for: ${path}`);
+  startBuild = async (dirPath) => {
+    console.log(`starting build for: ${dirPath}`);
 
-    const files = await fs.readdir(path, { withFileTypes: true });
+    const files = await fs.readdir(dirPath, { withFileTypes: true });
     const hasPackageJson = files.some((f) => f.name === 'package.json');
     if (!hasPackageJson) {
-      console.log(`skipping build. package.json is missing in ${path}`);
+      console.log(`skipping build. package.json is missing in ${dirPath}`);
       return false;
     }
 
-    const installResult = await runCliCmd('npm', ['install'], path);
+    const installResult = await runCliCmd('npm', ['install'], dirPath);
     if (installResult !== 0) {
       console.error(`npm install failed with code: ${installResult}`);
       return false;
@@ -35,7 +36,16 @@ export class BuildManager {
 
     console.log('npm install successful');
 
-    const buildResult = await runCliCmd('npm', ['run', 'build'], path);
+    const packageJsonPath = path.join(dirPath, 'package.json');
+    const packageJsonContent = await fs.readFile(packageJsonPath);
+    const packageJson = JSON.parse(packageJsonContent);
+
+    if (!packageJson.scripts.build) {
+      console.log('skipping build. missing build script in package.json');
+      return false;
+    }
+
+    const buildResult = await runCliCmd('npm', ['run', 'build'], dirPath);
     if (buildResult !== 0) {
       console.error(`build failed with code: ${buildResult}`);
       return false;
