@@ -27,7 +27,9 @@ export class GitManager {
     });
 
     console.log(`merging branches`);
-    await repo.mergeBranches(branchName, `origin/${branchName}`);
+    await repo.mergeBranches(branchName, `origin/${branchName}`, null, null, {
+      fileFavor: git.Merge.FILE_FAVOR.THEIRS,
+    });
 
     this.walker = repo.createRevWalk();
     this.headCommit = await repo.getBranchCommit('master');
