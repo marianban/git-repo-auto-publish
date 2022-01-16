@@ -1,4 +1,3 @@
-import path from 'path';
 import git from 'nodegit';
 
 export class GitManager {
@@ -39,7 +38,7 @@ export class GitManager {
     console.log('useBranch successfully completed');
   };
 
-  hasNewCommitFrom = async (dirName, fromDate) => {
+  hasNewCommitFrom = async (dirPath, fromDate) => {
     if (!this.walker) {
       throw new Error('Walker is undefined. Call useBranch first.');
     }
@@ -49,10 +48,9 @@ export class GitManager {
 
     this.walker.push(this.headCommit.sha());
     this.walker.sorting(git.Revwalk.SORT.TIME);
-    const dir = path.join(this.repoPath, dirName);
 
-    console.log(`getting git history for: ${dir}`);
-    const history = await this.walker.fileHistoryWalk(dir, 100);
+    console.log(`getting git history for: ${dirPath}`);
+    const history = await this.walker.fileHistoryWalk(dirPath, 100);
     const recentCommit = history[0];
     if (!recentCommit) {
       console.log('no new commits found.');
