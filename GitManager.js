@@ -15,7 +15,9 @@ export class GitManager {
     const repo = await git.Repository.open(this.repoPath);
 
     console.log(`checking out branch: ${branchName}`);
-    await repo.checkoutBranch(branchName);
+    await repo.checkoutBranch(branchName, {
+      checkoutStrategy: git.Checkout.STRATEGY.FORCE,
+    });
 
     console.log(`fetching all`);
     await repo.fetchAll({
