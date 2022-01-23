@@ -13,6 +13,10 @@ const getValue = async (key) => {
 
 export class DBClient {
   isProcessRunning = async () => {
+    if (!db.isOperational()) {
+      console.log('db is not operational');
+      return;
+    }
     const value = await getValue('__process_running');
     const isRunning = value === 'true';
     console.log(`isRunning: ${isRunning}`);
@@ -20,11 +24,11 @@ export class DBClient {
   };
   setProcessAsRunning = async () => {
     console.log('setting process as running');
-    await db.put('__process_running', true);
+    await db.put('__process_running', true, { sync: true });
   };
   setProcessAsFinished = async () => {
     console.log('setting process as finished');
-    await db.put('__process_running', false);
+    await db.put('__process_running', false, { sync: true });
   };
   getLastBuildDate = async (dir) => {
     const value = await getValue(`__last_build_date__${dir}`);
@@ -33,6 +37,8 @@ export class DBClient {
   };
   setLastBuildDate = async (dir, date) => {
     console.log(`setting last build date to ${date} for ${dir}`);
-    await db.put(`__last_build_date__${dir}`, new Date(date).toISOString());
+    await db.put(`__last_build_date__${dir}`, new Date(date).toISOString(), {
+      sync: true,
+    });
   };
 }
