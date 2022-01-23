@@ -32,8 +32,8 @@ export class GitManager {
       fileFavor: git.Merge.FILE_FAVOR.THEIRS,
     });
 
-    this.walker = repo.createRevWalk();
     this.headCommit = await repo.getBranchCommit('master');
+    this.walker = repo.createRevWalk();
 
     console.log('useBranch successfully completed');
   };
@@ -46,17 +46,12 @@ export class GitManager {
       throw new Error('headCommit is undefined. Call useBranch first.');
     }
 
-    this.walker.push(this.headCommit.sha());
-    this.walker.sorting(git.Revwalk.SORT.TIME);
-
-    console.log(`getting git history for: ${dirPath}`);
-    const history = await this.walker.fileHistoryWalk(dirPath, 100);
-    const recentCommit = history[0];
+    const recentCommit = await this.getRecentDirCommit(dirPath);
     if (!recentCommit) {
       console.log('no new commits found.');
       return false;
     }
-    const recentCommitDate = recentCommit.commit.date();
+    const recentCommitDate = recentCommit.date();
     const hasNewCommit = recentCommitDate > fromDate;
     if (!hasNewCommit) {
       console.log(`no new commits since: ${fromDate}`);
@@ -66,5 +61,31 @@ export class GitManager {
       );
     }
     return hasNewCommit;
+  };
+
+  getRecentDirCommit = async (dirPath) => {
+    this.walker.reset();
+    this.walker.push(this.headCommit.sha());
+    this.walker.sorting(git.Revwalk.SORT.TIME);
+
+    console.log(`getting recent commit for: ${dirPath}`);
+
+    const dir = dirPath.substring(this.repoPath.length + 1);
+
+    const commits = await this.walker.getCommits(100);
+    for (const commit of commits) {
+      const diff = await commit.getDiff();
+      for (const change of diff) {
+        const patches = await change.patches();
+        if (patches.some((p) => p.newFile().path().startsWith(dir))) {
+          console.log(
+            'recent commit: ' + commit.date() + ' ' + commit.summary()
+          );
+          return commit;
+        }
+      }
+    }
+
+    return null;
   };
 }
