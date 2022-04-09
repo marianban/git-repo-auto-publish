@@ -7,6 +7,9 @@ import { GitManager } from './GitManager.js';
 
 console.time(`AUTO PUBLISH`);
 
+// locking is done in bash script
+// https://unix.stackexchange.com/questions/48505/how-to-make-sure-only-one-instance-of-a-bash-script-runs
+
 try {
   dotenv.config();
 
