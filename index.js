@@ -17,26 +17,18 @@ try {
   const fileManager = new FileManager();
   const buildManager = new BuildManager();
 
-  if (!(await db.isProcessRunning())) {
+  await gitManager.useBranch('master');
+  const dirs = await fileManager.getDirectories(pathToRepo);
+
+  for (const dir of dirs) {
     try {
-      await db.setProcessAsRunning();
-
-      await gitManager.useBranch('master');
-      const dirs = await fileManager.getDirectories(pathToRepo);
-
-      for (const dir of dirs) {
-        try {
-          console.log(`------------ ${dir} -------------`);
-          await processDirectory(path.join(pathToRepo, dir));
-          console.log(`directory ${dir} successfully processed`);
-        } catch (err) {
-          console.error(
-            `processing of directory ${dir} failed with error: \n ${err}`
-          );
-        }
-      }
-    } finally {
-      await db.setProcessAsFinished();
+      console.log(`------------ ${dir} -------------`);
+      await processDirectory(path.join(pathToRepo, dir));
+      console.log(`directory ${dir} successfully processed`);
+    } catch (err) {
+      console.error(
+        `processing of directory ${dir} failed with error: \n ${err}`
+      );
     }
   }
 
@@ -52,6 +44,7 @@ try {
   }
 } catch (err) {
   console.error(err);
+
   throw err;
 }
 
