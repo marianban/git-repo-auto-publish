@@ -1,4 +1,5 @@
 import git from 'nodegit';
+const { execSync } = require('child_process');
 
 export class GitManager {
   constructor(repoPath) {
@@ -30,9 +31,12 @@ export class GitManager {
     this.headCommit = await repo.getBranchCommit('master');
 
     console.log(`resetting branch`);
-    await git.Reset.reset(repo, this.headCommit, git.Reset.TYPE.HARD, {
-      checkoutStrategy: git.Checkout.STRATEGY.FORCE,
-    });
+
+    execSync(`cd ${this.repoPath}; git clean -f`);
+
+    // await git.Reset.reset(repo, this.headCommit, git.Reset.TYPE.HARD, {
+    //   checkoutStrategy: git.Checkout.STRATEGY.FORCE,
+    // });
 
     console.log(`merging branches`);
     await repo.mergeBranches(branchName, `origin/${branchName}`, null, null, {
