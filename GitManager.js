@@ -1,5 +1,5 @@
 import git from 'nodegit';
-const { execSync } = require('child_process');
+import { execSync } from 'child_process';
 
 export class GitManager {
   constructor(repoPath) {
