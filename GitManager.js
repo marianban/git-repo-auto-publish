@@ -28,7 +28,7 @@ export class GitManager {
       },
     });
 
-    this.headCommit = await repo.getBranchCommit('master');
+    this.headCommit = await repo.getBranchCommit('release');
 
     console.log(`resetting branch`);
 
@@ -43,7 +43,7 @@ export class GitManager {
       fileFavor: git.Merge.FILE_FAVOR.THEIRS,
     });
 
-    this.headCommit = await repo.getBranchCommit('master');
+    this.headCommit = await repo.getBranchCommit('release');
     this.walker = repo.createRevWalk();
 
     console.log('useBranch successfully completed');
