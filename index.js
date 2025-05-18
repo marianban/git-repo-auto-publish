@@ -20,7 +20,7 @@ try {
   const fileManager = new FileManager();
   const buildManager = new BuildManager();
 
-  await gitManager.useBranch('master');
+  await gitManager.useBranch('release');
   const dirs = await fileManager.getDirectories(pathToRepo);
 
   for (const dir of dirs) {
